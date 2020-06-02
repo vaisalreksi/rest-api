@@ -1,0 +1,702 @@
+Version 10272018_2
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS `bast_detail`;
+DROP TABLE IF EXISTS `bast_header`;
+
+CREATE TABLE IF NOT EXISTS `bast` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL,
+  `customer_id` INT NOT NULL,
+  `sk_no` VARCHAR(64) NULL,
+  `sk_date` DATE NULL,
+  `bahp_id` INT NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  `deleted_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_bast_customer1_idx` (`customer_id` ASC),
+  INDEX `fk_bast_bahp1_idx` (`bahp_id` ASC),
+  CONSTRAINT `fk_bast_customer1`
+    FOREIGN KEY (`customer_id`)
+    REFERENCES `customer` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_bast_bahp1`
+    FOREIGN KEY (`bahp_id`)
+    REFERENCES `bahp` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+SET FOREIGN_KEY_CHECKS=1;
+
+Version 10272018_1
+CREATE TABLE IF NOT EXISTS `bapp` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL,
+  `customer_id` INT NOT NULL,
+  `sk_no` VARCHAR(64) NULL,
+  `sk_date` DATE NULL,
+  `bahp_id` INT NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  `deleted_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_bapp_customer1_idx` (`customer_id` ASC),
+  INDEX `fk_bapp_bahp1_idx` (`bahp_id` ASC),
+  CONSTRAINT `fk_bapp_customer1`
+    FOREIGN KEY (`customer_id`)
+    REFERENCES `customer` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_bapp_bahp1`
+    FOREIGN KEY (`bahp_id`)
+    REFERENCES `bahp` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+Version 10252018_1
+CREATE TABLE IF NOT EXISTS `bahp` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL,
+  `sk_no` VARCHAR(64) NULL,
+  `sk_date` DATE NULL,
+  `sp_id` INT NOT NULL,
+  `result` TEXT NULL,
+  `checker_1` VARCHAR(64) NULL,
+  `checker_2` VARCHAR(64) NULL,
+  `checker_3` VARCHAR(64) NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  `deleted_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_bahp_sp1_idx` (`sp_id` ASC),
+  CONSTRAINT `fk_bahp_sp1`
+    FOREIGN KEY (`sp_id`)
+    REFERENCES `sp` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+Version 10202018_14
+ALTER TABLE `spb` ADD `penalty` TEXT NULL AFTER `address`;
+
+Version 10202018_13
+SET FOREIGN_KEY_CHECKS=0;
+
+ALTER TABLE `spb` DROP FOREIGN KEY `fk_spb_spk_header1`;
+ALTER TABLE `spb` DROP INDEX `fk_spb_spk_header1_idx`;
+ALTER TABLE `spb` DROP `spk_header_id`;
+ALTER TABLE `spb` DROP `date`;
+
+ALTER TABLE `spb` ADD `sp_id` INT NULL AFTER `no_ref`;
+ALTER TABLE `spb` ADD INDEX `fk_spb_sp1_idx` (`sp_id` ASC);
+ALTER TABLE `spb` ADD CONSTRAINT `fk_spb_sp1`
+    FOREIGN KEY (`sp_id`)
+    REFERENCES `sp` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+SET FOREIGN_KEY_CHECKS=1;
+
+Version 10202018_11
+ALTER TABLE `spmk_header` DROP `name`;
+
+Version 10202018_10
+ALTER TABLE `spmk_header` DROP FOREIGN KEY `fk_spk_detail_spk_header10`;
+ALTER TABLE `spmk_header` DROP INDEX `fk_spk_detail_spk_header1_idx`;
+ALTER TABLE `spmk_header` DROP `spk_header_id`;
+
+Version 10202018_8
+ALTER TABLE `master_company` ADD `no_kp` VARCHAR(10) NULL AFTER `faximile`;
+ALTER TABLE `master_company` ADD `date_kp` DATE NULL AFTER `no_kp`;
+
+Version 10202018_7
+ALTER TABLE `spk_header` ADD `origin` VARCHAR(20) NULL AFTER `no_ref`;
+
+Version 10202018_6
+ALTER TABLE `sp` ADD `payment` DECIMAL(15,2) NULL AFTER `contract_value`;
+
+Version 10202018_5
+ALTER TABLE `sp` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+
+Version 10202018_4
+ALTER TABLE `master_company` CHANGE `phone` `phone` VARCHAR(15) NULL;
+ALTER TABLE `spk_header` CHANGE `date_doc` `date_doc` DATE NULL;
+
+Version 10202018_2
+ALTER TABLE `sp` DROP `name`;
+
+Version 10202018_1
+
+SET FOREIGN_KEY_CHECKS=0;
+
+ALTER TABLE `customer` DROP `company`;
+ALTER TABLE `customer` ADD `master_company_id` INT NULL AFTER `name`;
+ALTER TABLE `customer` ADD INDEX `fk_customer_master_company1_idx` (`master_company_id` ASC);
+ALTER TABLE `customer` ADD CONSTRAINT `fk_customer_master_company1`
+    FOREIGN KEY (`master_company_id`)
+    REFERENCES `master_company` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+SET FOREIGN_KEY_CHECKS=1;
+
+Version 10192018_1
+
+CREATE TABLE IF NOT EXISTS `master_company` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `email` VARCHAR(45) NULL,
+  `phone` VARCHAR(10) NULL,
+  `address` TEXT NULL,
+  `faximile` VARCHAR(100) NULL,
+  `notaris_no` VARCHAR(45) NULL,
+  `notaris_date` DATE NULL,
+  `notaris_name` VARCHAR(50) NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  `deleted_at` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+Version 10152018_4
+DROP TABLE IF EXISTS `audit_trail`;
+CREATE TABLE IF NOT EXISTS `audit_trail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `module` VARCHAR(45) NULL,
+  `no_ref` VARCHAR(45) NULL,
+  `action` VARCHAR(10) NULL,
+  `users_id` INT NOT NULL,
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  `deleted_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_audit_trail_users1_idx` (`users_id` ASC),
+  CONSTRAINT `fk_audit_trail_users1`
+    FOREIGN KEY (`users_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+Version 10152018_2
+ALTER TABLE `users` ADD `last_login` DATETIME NULL AFTER `status`;
+
+Version 10152018_1
+
+ALTER TABLE `bastp` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `bast_detail` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `bast_header` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `customer` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `master_division` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `master_items` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `master_letter_type` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `menu` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `role` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `role_detail` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `spb` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `spk_detail` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `spk_header` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `spmk_detail` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `spmk_header` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `users` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+ALTER TABLE `vendor` ADD `deleted_at` DATETIME NULL AFTER `updated_at`;
+
+Version 10142018_2
+
+CREATE TABLE IF NOT EXISTS `audit_trail` (
+  `id` INT NOT NULL,
+  `module` VARCHAR(100) NULL,
+  `users_id` INT NOT NULL,
+  `created_at` DATETIME NULL,
+  `updated_at` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_audit_trail_users1_idx` (`users_id` ASC),
+  CONSTRAINT `fk_audit_trail_users1`
+    FOREIGN KEY (`users_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+Version 10142018_1
+
+ALTER TABLE `spmk_header` CHANGE `name` `name` VARCHAR(255) NULL DEFAULT NUll;
+ALTER TABLE `sp` ADD `name` VARCHAR(255) NULL AFTER `no_ref`;
+
+Version 10132018_2
+
+SET FOREIGN_KEY_CHECKS=0;
+
+ALTER TABLE `spmk_header` ADD `sp_id` INT NOT NULL AFTER `spk_header_id`;
+ALTER TABLE `spmk_header` ADD INDEX `fk_spmk_header_sp1_idx` (`sp_id` ASC);
+ALTER TABLE `spmk_header` ADD CONSTRAINT `fk_spmk_header_sp1`
+    FOREIGN KEY (`sp_id`)
+    REFERENCES `sp` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
+SET FOREIGN_KEY_CHECKS=1;
+
+Version 10132018_1
+
+ALTER TABLE `spmk_header` ADD `terms` TEXT NULL AFTER `penalty`;
+ALTER TABLE `spk_header` CHANGE `terms` `intructions` TEXT NULL DEFAULT NUll;
+
+Version 09222018_6
+
+ALTER TABLE spk_detail DROP FOREIGN KEY fk_spk_detail_master_activity1;
+ALTER TABLE spk_detail DROP INDEX fk_spk_detail_master_activity1_idx;
+ALTER TABLE `spk_detail` CHANGE `master_activity_id` `activity` VARCHAR(255) NULL DEFAULT NUll;
+DROP TABLE `master_activity`;
+
+Version 09222018_5
+
+ALTER TABLE `spk_header` DROP `penalty`;
+ALTER TABLE `spmk_header` ADD `penalty` TEXT NULL AFTER `spk_header_id`;
+
+Version 09222018_4
+
+ALTER TABLE `spmk_header` CHANGE `name` `name` VARCHAR(45) NULL DEFAULT NUll;
+ALTER TABLE `sp` CHANGE `contract_value` `contract_value` DECIMAL(15,2) NULL DEFAULT NUll;
+
+Version 09222018_2
+
+SET FOREIGN_KEY_CHECKS = 0;
+ALTER TABLE `customer` ADD `company` VARCHAR(100) NULL AFTER `name`;
+ALTER TABLE `customer` ADD `flag` TINYINT(4) NULL DEFAULT 0 COMMENT '0: pejabat\n1: vendor' AFTER `company`;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+Version 09112018_2
+SET FOREIGN_KEY_CHECKS = 0;
+ALTER TABLE `customer` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;
+SET FOREIGN_KEY_CHECKS = 1;
+
+Version 09112018_1
+
+ALTER TABLE `menu` ADD `icon` VARCHAR(50) NULL AFTER `url`;
+
+Version 09082018_2
+
+ALTER TABLE `master_division` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `master_division` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `customer` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `customer` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `spk_header` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `spk_header` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `master_activity` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `master_activity` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `master_letter_type` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `master_letter_type` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `master_items` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `master_items` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `spk_detail` ADD `created_at` DATETIME NULL AFTER `master_items_id`;
+ALTER TABLE `spk_detail` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `spmk_header` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `spmk_header` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `spmk_detail` ADD `created_at` DATETIME NULL AFTER `master_letter_type_id`;
+ALTER TABLE `spmk_detail` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `sp` ADD `created_at` DATETIME NULL AFTER `spk_header_id`;
+ALTER TABLE `sp` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `spb` ADD `created_at` DATETIME NULL AFTER `spk_header_id`;
+ALTER TABLE `spb` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `bast_header` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `bast_header` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `bast_detail` ADD `created_at` DATETIME NULL AFTER `master_letter_type_id`;
+ALTER TABLE `bast_detail` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `bastp` ADD `created_at` DATETIME NULL AFTER `bast_header_id`;
+ALTER TABLE `bastp` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `vendor` ADD `created_at` DATETIME NULL AFTER `master_letter_type_id`;
+ALTER TABLE `vendor` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `menu` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `menu` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `role` ADD `created_at` DATETIME NULL AFTER `status`;
+ALTER TABLE `role` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `role_detail` ADD `created_at` DATETIME NULL AFTER `menu_id`;
+ALTER TABLE `role_detail` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+ALTER TABLE `users` ADD `created_at` DATETIME NULL AFTER `role_id`;
+ALTER TABLE `users` ADD `updated_at` DATETIME NULL AFTER `created_at`;
+
+Version 09082018_1
+
+CREATE TABLE IF NOT EXISTS `master_division` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(100) NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `customer` (
+  `id` INT NOT NULL,
+  `master_division_id` INT NOT NULL,
+  `name` VARCHAR(45) NULL,
+  `nip` VARCHAR(45) NULL,
+  `phone` VARCHAR(15) NULL,
+  `email` VARCHAR(100) NULL,
+  `address` TEXT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`),
+  INDEX `fk_customer_master_division_idx` (`master_division_id` ASC),
+  CONSTRAINT `fk_customer_master_division`
+    FOREIGN KEY (`master_division_id`)
+    REFERENCES `master_division` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `spk_header` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `unit` VARCHAR(100) NULL,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL,
+  `no_ref_doc` VARCHAR(100) NULL,
+  `date_doc` VARCHAR(45) NULL,
+  `desc_source` TEXT NULL,
+  `start_date` DATE NULL,
+  `end_date` DATE NULL,
+  `penalty` TEXT NULL,
+  `terms` TEXT NULL,
+  `customer_commitment_id` INT NOT NULL,
+  `customer_supplier_id` INT NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`),
+  INDEX `fk_spk_header_customer1_idx` (`customer_commitment_id` ASC),
+  INDEX `fk_spk_header_customer2_idx` (`customer_supplier_id` ASC),
+  CONSTRAINT `fk_spk_header_customer1`
+    FOREIGN KEY (`customer_commitment_id`)
+    REFERENCES `customer` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_spk_header_customer2`
+    FOREIGN KEY (`customer_supplier_id`)
+    REFERENCES `customer` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `master_activity` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(100) NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `master_letter_type` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(100) NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `master_items` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(100) NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `spk_detail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `volume` INT(6) NOT NULL,
+  `type` TINYINT(4) NULL DEFAULT 0 COMMENT '0: exclude\n1: include',
+  `item_amount` DECIMAL(15,2) NULL,
+  `total_amount` DECIMAL(15,2) NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `spk_header_id` INT NOT NULL,
+  `master_activity_id` INT NOT NULL,
+  `master_items_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_spk_detail_spk_header1_idx` (`spk_header_id` ASC),
+  INDEX `fk_spk_detail_master_activity1_idx` (`master_activity_id` ASC),
+  INDEX `fk_spk_detail_master_items1_idx` (`master_items_id` ASC),
+  CONSTRAINT `fk_spk_detail_spk_header1`
+    FOREIGN KEY (`spk_header_id`)
+    REFERENCES `spk_header` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_spk_detail_master_activity1`
+    FOREIGN KEY (`master_activity_id`)
+    REFERENCES `master_activity` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_spk_detail_master_items1`
+    FOREIGN KEY (`master_items_id`)
+    REFERENCES `master_items` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `spmk_header` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NULL DEFAULT 0 COMMENT '0: exclude\n1: include',
+  `spk_header_id` INT NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`),
+  INDEX `fk_spk_detail_spk_header1_idx` (`spk_header_id` ASC),
+  CONSTRAINT `fk_spk_detail_spk_header10`
+    FOREIGN KEY (`spk_header_id`)
+    REFERENCES `spk_header` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `spmk_detail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `file` TEXT NOT NULL,
+  `spmk_header_id` INT NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `master_letter_type_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_spmk_detail_spmk_header1_idx` (`spmk_header_id` ASC),
+  INDEX `fk_spmk_detail_master_letter_type1_idx` (`master_letter_type_id` ASC),
+  CONSTRAINT `fk_spmk_detail_spmk_header1`
+    FOREIGN KEY (`spmk_header_id`)
+    REFERENCES `spmk_header` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_spmk_detail_master_letter_type1`
+    FOREIGN KEY (`master_letter_type_id`)
+    REFERENCES `master_letter_type` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `sp` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL DEFAULT NULL,
+  `contract_value` DECIMAL(15,2) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `dipa_no` VARCHAR(64) NULL,
+  `dipa_date` DATE NULL,
+  `deadline` DATE NULL,
+  `bank_account` VARCHAR(100) NULL,
+  `bank_no` VARCHAR(32) NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `spk_header_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_sp_spk_header1_idx` (`spk_header_id` ASC),
+  CONSTRAINT `fk_sp_spk_header1`
+    FOREIGN KEY (`spk_header_id`)
+    REFERENCES `spk_header` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `spb` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL DEFAULT NULL,
+  `address` TEXT NULL DEFAULT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `spk_header_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_spb_spk_header1_idx` (`spk_header_id` ASC),
+  CONSTRAINT `fk_spb_spk_header1`
+    FOREIGN KEY (`spk_header_id`)
+    REFERENCES `spk_header` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `bast_header` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL DEFAULT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `bast_detail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `file` TEXT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `bast_header_id` INT NOT NULL,
+  `master_letter_type_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_bast_detail_bast_header1_idx` (`bast_header_id` ASC),
+  INDEX `fk_bast_detail_master_letter_type1_idx` (`master_letter_type_id` ASC),
+  CONSTRAINT `fk_bast_detail_bast_header1`
+    FOREIGN KEY (`bast_header_id`)
+    REFERENCES `bast_header` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_bast_detail_master_letter_type1`
+    FOREIGN KEY (`master_letter_type_id`)
+    REFERENCES `master_letter_type` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `bastp` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `no_ref` VARCHAR(45) NOT NULL,
+  `date` DATE NULL DEFAULT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `bast_header_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_bastp_bast_header1_idx` (`bast_header_id` ASC),
+  CONSTRAINT `fk_bastp_bast_header1`
+    FOREIGN KEY (`bast_header_id`)
+    REFERENCES `bast_header` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `vendor` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `file` VARCHAR(45) NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `master_letter_type_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_vendor_master_letter_type1_idx` (`master_letter_type_id` ASC),
+  CONSTRAINT `fk_vendor_master_letter_type1`
+    FOREIGN KEY (`master_letter_type_id`)
+    REFERENCES `master_letter_type` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `menu` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(100) NOT NULL,
+  `header_id` INT(11) NULL,
+  `header` TINYINT(4) NULL DEFAULT 0 COMMENT '0: header\n1: detail',
+  `sort` INT(5) NOT NULL DEFAULT 0,
+  `url` VARCHAR(45) NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `role` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(100) NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `role_detail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `access` TINYINT(4) NULL DEFAULT 0 COMMENT '0: not access\n1: access',
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive',
+  `role_id` INT NOT NULL,
+  `menu_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_role_detail_role1_idx` (`role_id` ASC),
+  INDEX `fk_role_detail_menu1_idx` (`menu_id` ASC),
+  CONSTRAINT `fk_role_detail_role1`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `role` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_role_detail_menu1`
+    FOREIGN KEY (`menu_id`)
+    REFERENCES `menu` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_general_ci;
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(64) NOT NULL,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `status` TINYINT(4) NULL DEFAULT 0 COMMENT '0: active\n1: inactive\n2: suspend',
+  `role_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC),
+  INDEX `fk_users_role1_idx` (`role_id` ASC),
+  CONSTRAINT `fk_users_role1`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `role` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+Version initial
+
+/*berikut query tabel version*/
+
+CREATE TABLE IF NOT EXISTS `db_version`(
+  `version` VARCHAR(200),
+  `query` TEXT,
+  `created_at` TIMESTAMP NULL,
+  `updated_at` TIMESTAMP NULL
+);
